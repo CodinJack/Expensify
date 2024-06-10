@@ -47,8 +47,8 @@ Before you begin, ensure you have the following installed on your local machine:
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/your-username/expense-management-system.git
-   cd expense-management-system
+   git clone https://github.com/CodinJack/Expensify.git
+   cd Expensify
    ```
 
 2. **Backend setup:**
