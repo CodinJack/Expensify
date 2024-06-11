@@ -7,6 +7,7 @@ const router = express.Router();
 router
     .post("/users", createUsers)
     .get("/users", getUsers)
-    .delete("users/:id", deleteUsers);
+    .delete("users/:id", deleteUsers)
+    .update("users/:id", updateUsers);
 
 module.exports = router;
