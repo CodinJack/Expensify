@@ -1,11 +1,12 @@
-const express = require("express")
+const express = require("express");
 const router = express.Router();
 
-router.post('/add-balance', addBalance)
-      .get('/get-balance', getBalance)
-      .post('/add-expense', addExpense)
-      .get('get-expenses', getExpenses)
-      .get('get-expense/:id', getExpense)
-      .delete('delete-expense/:id', deleteExpense)
+router
+    .post("/balance", addBalance)
+    .get("/balance", getBalance)
+    .post("/expense", addExpense)
+    .get("expenses", getAllExpenses)
+    .get("expense/:id", getExpenseByID)
+    .delete("delete-expense/:id", deleteExpenseByID);
 
-module.exports = router
+module.exports = router;
