@@ -12,3 +12,16 @@ model users {
   username String @unique(map: "username") @db.VarChar(255)
   password String @db.VarChar(255)
 }
+
+model expenses {
+  id       Int    @id @default(autoincrement())
+  user     users @relation(fields: [id], references: [id])
+  title    String @db.VarChar(50)
+  amount   Decimal(10, 2) @db.Decimal(10, 2)
+  type      String @db.VarChar(50) @default("expense")
+  date      Date    @db.Date
+  category String @db.VarChar(50)
+  description String @db.VarChar(20)
+  createdAt DateTime @default(currentTimestamp())
+  updatedAt DateTime @default(currentTimestamp()) @update(currentTimestamp())
+}
