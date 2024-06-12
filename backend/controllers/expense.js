@@ -1,40 +1,45 @@
-const { db } = require('../database/db');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 exports.addExpense = async (req, res) => {
-    const { title, amount, description, date } = req.body;
+    const { user_id, title, amount, type, date, category, description } = req.body;
 
-    if (!title || !description || !date) {
+    if (!title || !description || !date || !category) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
     if (amount <= 0 || typeof amount !== 'number') {
         return res.status(400).json({ message: 'Amount must be a positive number!' });
     }
 
-    const query = `
-    INSERT INTO expenses (title, amount, description, date)
-    VALUES (?, ?, ?, ?)
-  `;
-
-    db.query(query, [title, amount, description, date], (err, result) => {
-        if (err) {
-            console.error('Error inserting expense: ', err);
-            return res.status(500).json({ message: 'Server Error' });
-        }
-        res.status(200).json({ message: 'Expense Added : ', expenseId: result.insertId });
-    });
+    try {
+        const expense = await prisma.expenses.create({
+            data: {
+                user_id,
+                title,
+                amount,
+                type,
+                date: new Date(date),
+                category,
+                description,
+            },
+        });
+        res.status(200).json({ message: 'Expense Added', expenseId: expense.id });
+    } catch (error) {
+        console.error('Error inserting expense: ', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
 
 exports.getAllExpenses = async (req, res) => {
     try {
-        const query = 'SELECT * FROM expenses ORDER BY createdAt DESC';
-        db.query(query, (err, results) => {
-            if (err) {
-                console.error('Error fetching expenses: ', err);
-                return res.status(500).json({ message: 'Server Error' });
-            }
-            res.status(200).json(results);
+        const expenses = await prisma.expenses.findMany({
+            orderBy: {
+                createdAt: 'desc',
+            },
         });
+        res.status(200).json(expenses);
     } catch (error) {
+        console.error('Error fetching expenses: ', error);
         res.status(500).json({ message: 'Server Error' });
     }
 };
@@ -42,31 +47,33 @@ exports.getAllExpenses = async (req, res) => {
 exports.getExpenseByID = async (req, res) => {
     const { id } = req.params;
 
-    const query = 'SELECT * FROM expenses WHERE id = ?';
-    db.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('Error fetching expense: ', err);
-            return res.status(500).json({ message: 'Server Error' });
-        }
-        if (results.length === 0) {
+    try {
+        const expense = await prisma.expenses.findUnique({
+            where: { id: parseInt(id) },
+        });
+
+        if (!expense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
-        res.status(200).json(results[0]);
-    });
+
+        res.status(200).json(expense);
+    } catch (error) {
+        console.error('Error fetching expense: ', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
 
 exports.deleteExpenseByID = async (req, res) => {
     const { id } = req.params;
 
-    const query = 'DELETE FROM expenses WHERE id = ?';
-    db.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('Error deleting expense: ', err);
-            return res.status(500).json({ message: 'Server Error' });
-        }
-        if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'Expense not found' });
-        }
+    try {
+        const expense = await prisma.expenses.delete({
+            where: { id: parseInt(id) },
+        });
+
         res.status(200).json({ message: 'Expense Deleted' });
-    });
+    } catch (error) {
+        console.error('Error deleting expense: ', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
