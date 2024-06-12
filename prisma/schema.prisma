@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../backend/node_modules/.prisma/client"
 }
 
 datasource db {
@@ -28,17 +29,4 @@ model expenses {
   users       users?    @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expenses_ibfk_1")
 
   @@index([user_id], map: "user_id")
-}
-
-model expenses {
-  id       Int    @id @default(autoincrement())
-  user     users @relation(fields: [id], references: [id])
-  title    String @db.VarChar(50)
-  amount   Decimal(10, 2) @db.Decimal(10, 2)
-  type      String @db.VarChar(50) @default("expense")
-  date      Date    @db.Date
-  category String @db.VarChar(50)
-  description String @db.VarChar(20)
-  createdAt DateTime @default(currentTimestamp())
-  updatedAt DateTime @default(currentTimestamp()) @update(currentTimestamp())
 }
