@@ -30,3 +30,57 @@ exports.createUser = async (req, res) => {
         }
     });
 };
+
+exports.getUsers = async (req, res) => {
+    const users = await prisma.user.findMany();
+    return res.json(users);
+};
+
+exports.getUserByID = async (req, res) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: req.params.id,
+        },
+    });
+    if (user) {
+        return res.json(user);
+    }
+    return res.json({ msg: "user doesn't exist" });
+};
+
+exports.deleteUserByID = async (req, res) => {
+    const user = await prisma.user.delete({
+        where: {
+            id: req.params.id,
+        },
+    });
+    if (user) {
+        return res.json(user);
+    }
+    return res.json({ msg: "user doesn't exist" });
+};
+
+exports.updateUserByID = async (req, res) => {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: req.params.id,
+        },
+    });
+
+    if (req.body.username) {
+        user.username = req.body.username;
+    }
+    user = await prisma.user.update({
+        where: {
+            id: req.params.id,
+        },
+        data: {
+            username: user.username,
+        },
+    });
+
+    if (user) {
+        return res.json({ msg: "user was updated successfully." });
+    }
+    return res.json({ msg: "failed." });
+};
