@@ -2,13 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 
-// router
-//     .post("/user", createUser)
-//     .get("/user", getUsers)
-//     .get("user/:id", getUserByID)
-//     .delete("user/:id", deleteUserByID)
-//     .update("user/:id", updateUserByID);
-
 exports.createUser = async (req, res) => {
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
         if (err) {
@@ -32,14 +25,26 @@ exports.createUser = async (req, res) => {
 };
 
 exports.getUsers = async (req, res) => {
+    if (!req.session.passport) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
+    if (req.session.passport.user !== 0) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
     const users = await prisma.user.findMany();
     return res.json(users);
 };
 
 exports.getUserByID = async (req, res) => {
+    if (!req.session.passport) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
+    if (req.session.passport.user !== 0) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
     const user = await prisma.user.findUnique({
         where: {
-            id: req.params.id,
+            id: Number(req.params.id),
         },
     });
     if (user) {
@@ -49,6 +54,12 @@ exports.getUserByID = async (req, res) => {
 };
 
 exports.deleteUserByID = async (req, res) => {
+    if (!req.session.passport) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
+    if (req.session.passport.user !== 0) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
     const user = await prisma.user.delete({
         where: {
             id: req.params.id,
@@ -61,6 +72,12 @@ exports.deleteUserByID = async (req, res) => {
 };
 
 exports.updateUserByID = async (req, res) => {
+    if (!req.session.passport) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
+    if (req.session.passport.user !== 0) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
     const user = await prisma.user.findUnique({
         where: {
             id: req.params.id,
