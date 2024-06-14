@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require("../node_modules/@prisma/client");
 const prisma = new PrismaClient();
 
 const express = require("express");
 const router = express.Router();
 
-router.post("/login", checkLoginDetails);
+//router.post("/login", checkLoginDetails);
 
 module.exports = router;

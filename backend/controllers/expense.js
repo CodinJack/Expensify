@@ -2,24 +2,23 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.addExpense = async (req, res) => {
-    const { user_id, title, amount, type, date, category, description } = req.body;
+    const { user_id, title, amount, type, date, description } = req.body;
 
-    if (!title || !description || !date || !category) {
+    if (!user_id || !title || !description || !date) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
     if (amount <= 0 || typeof amount !== 'number') {
         return res.status(400).json({ message: 'Amount must be a positive number!' });
     }
-
+    
     try {
         const expense = await prisma.expenses.create({
             data: {
-                user_id,
+                user_id: parseInt(user_id),
                 title,
                 amount,
                 type,
                 date: new Date(date),
-                category,
                 description,
             },
         });

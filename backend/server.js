@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
 const { readdirSync } = require('fs');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('./node_modules/@prisma/client');
 const prisma = new PrismaClient();
 const app = express();
+ 
+require('dotenv').config(); 
 
-require('dotenv').config();
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; 
 
 //middlewares
 app.use(express.json());
