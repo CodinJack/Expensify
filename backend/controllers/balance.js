@@ -2,17 +2,19 @@ const { PrismaClient } = require('../node_modules/@prisma/client');
 const prisma = new PrismaClient();
 
 exports.addBalance = async (req, res) => {
-    const { amount } = req.body;
+    const { user_id, amount } = req.body;
 
     if (amount === undefined || typeof amount !== 'number') {
         return res.status(400).json({ message: 'Amount must be a number!' });
     }
 
     try {
-        const balance = await prisma.balances.create({
+        const balance = await prisma.balance.create({
             data: {
+                user_id,
                 amount,
                 createdAt: new Date(),
+                updatedAt: new Date(),
             },
         });
         res.status(200).json({ message: 'Balance Added', balanceId: balance.id });
@@ -22,9 +24,10 @@ exports.addBalance = async (req, res) => {
     }
 };
 
+
 exports.getBalance = async (req, res) => {
     try {
-        const balance = await prisma.balances.findFirst({
+        const balance = await prisma.balance.findFirst({
             orderBy: {
                 createdAt: 'desc',
             },
@@ -40,4 +43,3 @@ exports.getBalance = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
-
