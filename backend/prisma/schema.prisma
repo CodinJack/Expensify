@@ -29,3 +29,15 @@ model expenses {
 
   @@index([user_id], map: "user_id")
 }
+
+model balance {
+  id          Int       @id @default(autoincrement())
+  user_id     Int?
+  amount      Decimal   @db.Decimal(10, 2)
+  createdAt   DateTime? @default(now()) @db.Timestamp(0)
+  updatedAt   DateTime? @default(now()) @db.Timestamp(0)
+  user        user?     @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "expenses_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+

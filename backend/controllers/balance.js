@@ -1,35 +1,43 @@
-//const { db } = require('../database/db');
+const { PrismaClient } = require('../node_modules/@prisma/client');
+const prisma = new PrismaClient();
 
 exports.addBalance = async (req, res) => {
-    // const { amount } = req.body;
+    const { amount } = req.body;
 
-    // if (amount === undefined || typeof amount !== 'number') {
-    //     return res.status(400).json({ message: 'Amount must be a number!' });
-    // }
+    if (amount === undefined || typeof amount !== 'number') {
+        return res.status(400).json({ message: 'Amount must be a number!' });
+    }
 
-    // const query = 'INSERT INTO balances (amount, createdAt) VALUES (?, NOW())';
-
-    // db.query(query, [amount], (err, result) => {
-    //     if (err) {
-    //         console.error('Error adding balance: ', err);
-    //         return res.status(500).json({ message: 'Server Error' });
-    //     }
-    //     res.status(200).json({ message: 'Balance Added', balanceId: result.insertId });
-    // });
+    try {
+        const balance = await prisma.balances.create({
+            data: {
+                amount,
+                createdAt: new Date(),
+            },
+        });
+        res.status(200).json({ message: 'Balance Added', balanceId: balance.id });
+    } catch (error) {
+        console.error('Error adding balance: ', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
-
 
 exports.getBalance = async (req, res) => {
-    // const query = 'SELECT * FROM balances ORDER BY createdAt DESC LIMIT 1';
+    try {
+        const balance = await prisma.balances.findFirst({
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
 
-    // db.query(query, (err, results) => {
-    //     if (err) {
-    //         console.error('Error fetching balance: ', err);
-    //         return res.status(500).json({ message: 'Server Error' });
-    //     }
-    //     if (results.length === 0) {
-    //         return res.status(404).json({ message: 'No balance record found' });
-    //     }
-    //     res.status(200).json(results[0]);
-    // });
+        if (!balance) {
+            return res.status(404).json({ message: 'No balance record found' });
+        }
+
+        res.status(200).json(balance);
+    } catch (error) {
+        console.error('Error fetching balance: ', error);
+        res.status(500).json({ message: 'Server Error' });
+    }
 };
+
