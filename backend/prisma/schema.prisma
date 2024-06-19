@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://root:user123@localhost:3306/expense_tracker"
 }
 
 model user {
@@ -20,7 +20,6 @@ model expenses {
   user_id     Int?
   title       String    @db.VarChar(50)
   amount      Decimal   @db.Decimal(10, 2)
-  type        String?   @default("expense") @db.VarChar(50)
   date        DateTime  @db.Date
   description String    @db.VarChar(20)
   createdAt   DateTime? @default(now()) @db.Timestamp(0)

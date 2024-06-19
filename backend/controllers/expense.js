@@ -2,9 +2,9 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.addExpense = async (req, res) => {
-    const { user_id, title, amount, type, date, description } = req.body;
+    const { title, amount, date, description } = req.body;
 
-    if (!user_id || !title || !description || !date) {
+    if (!title || !description || !date ) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
     if (amount <= 0 || typeof amount !== 'number') {
@@ -14,12 +14,10 @@ exports.addExpense = async (req, res) => {
     try {
         const expense = await prisma.expenses.create({
             data: {
-                user_id: parseInt(user_id),
                 title,
                 amount,
-                type,
                 date: new Date(date),
-                description,
+                description
             },
         });
         res.status(200).json({ message: 'Expense Added', expenseId: expense.id });

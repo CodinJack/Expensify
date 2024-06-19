@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const { readdirSync } = require('fs');
 const { PrismaClient } = require('./node_modules/@prisma/client');
 const prisma = new PrismaClient();
 const app = express();
@@ -14,7 +13,8 @@ app.use(express.json());
 app.use(cors());
 
 //routes
-readdirSync('./routes').map((route) => app.use('/api/', require('./routes/' + route)));
+const transactionRoutes = require('./routes/transactions');
+app.use('/transactions', transactionRoutes);
 
 const server = () => {
     app.listen(PORT, () => {
