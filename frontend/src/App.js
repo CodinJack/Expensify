@@ -3,11 +3,23 @@ import styled from "styled-components";
 import Orb from './components/background'
 import Navigation from './components/Navigation'
 import bg from './img/bg.png'
+
+import Expenses from './components/expenses'
+
 function App() {
   const [active, setActive] = useState(1)
 
   
-  
+  const displayData = () => {
+    switch(active){
+      
+      case 1: 
+        return <Expenses />
+      default: 
+        return <Expenses />
+    }
+  }
+
 
   const orbMemo = useMemo(() => {
     return <Orb />
@@ -19,6 +31,7 @@ function App() {
       
         <Navigation active={active} setActive={setActive} />
         <main>
+        {displayData()}
         </main>
 
     </AppStyled>
