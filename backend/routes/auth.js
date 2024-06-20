@@ -12,8 +12,8 @@ const authController = require("../controllers/auth");
 router.post(
     "/log-in",
     passport.authenticate("local", {
-        successRedirect: "/",
-        failureRedirect: "/",
+        successRedirect: "/successful",
+        failureRedirect: "/failed",
     })
 );
 
