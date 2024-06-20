@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
 import styled from "styled-components";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Orb from './components/Orb';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Orb from './components/background';
 import Navigation from './components/Navigation';
 import bg from './img/bg.png';
-
-import Dashboard from './components/Dashboard';
-import Transactions from './components/Transactions';
-import Incomes from './components/Incomes';
-import Expenses from './components/Expenses';
+import Dashboard from './components/dashboard';
+import Transactions from './components/transactions';
+import Incomes from './components/income';
+import Expenses from './components/expenses';
 
 function App() {
   const orbMemo = useMemo(() => {
@@ -21,12 +20,12 @@ function App() {
         {orbMemo}
         <Navigation />
         <main>
-          <Switch>
-            <Route path="/" exact component={Dashboard} />
-            <Route path="/transactions" component={Transactions} />
-            <Route path="/incomes" component={Incomes} />
-            <Route path="/expenses" component={Expenses} />
-          </Switch>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/incomes" element={<Incomes />} />
+            <Route path="/expenses" element={<Expenses />} />
+          </Routes>
         </main>
       </AppStyled>
     </Router>
