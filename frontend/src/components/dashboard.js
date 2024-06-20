@@ -1,42 +1,65 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Dashboard() {
+  const [totalExpenses, setTotalExpenses] = useState(0);
+  const [expenses, setExpenses] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [savings, setSavings] = useState(0);
+
+  useEffect(() => {
+    // Fetch total expenses
+    fetch('http://localhost:5000/transactions/expense') 
+      .then(response => response.json())
+      .then(data => {
+        // Calculate total expenses from the fetched data
+        const sum = data.reduce((acc, expense) => acc + expense.amount, 0);
+        setTotalExpenses(sum);
+        setExpenses(data);
+      })
+      .catch(error => console.error('Error fetching expenses:', error));
+
+    // Fetch balance
+    fetch('http://localhost:5000/transactions/balance')
+      .then(response => response.json())
+      .then(data => {
+        // Set balance
+        setBalance(data.amount);
+      })
+      .catch(error => console.error('Error fetching balance:', error));
+  }, []); // Empty dependency array ensures this effect runs only once
+
+  // Calculate savings
+  useEffect(() => {
+    const calculatedSavings = balance - totalExpenses;
+    setSavings(calculatedSavings);
+  }, [balance, totalExpenses]);
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-4xl font-extrabold mb-6 text-gray-900">Dashboard</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {/* Total Expenses */}
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-gray-700">Total Expenses</h2>
-            <p className="text-3xl font-bold text-gray-900">$2,500</p>
-          </div>
-          <div className="bg-red-100 p-2 rounded-full">
-            <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3-9a1 1 0 00-1-1H8a1 1 0 000 2h4a1 1 0 001-1z" clipRule="evenodd" />
-            </svg>
+            <p className="text-3xl font-bold text-gray-900">${totalExpenses}</p>
           </div>
         </div>
+
+        {/* Savings */}
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
           <div>
             <h2 className="text-xl font-semibold text-gray-700">Savings</h2>
-            <p className="text-3xl font-bold text-gray-900">$7,500</p>
-          </div>
-          <div className="bg-blue-100 p-2 rounded-full">
-            <svg className="w-8 h-8 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm4-8a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-            </svg>
+            <p className="text-3xl font-bold text-gray-900">${savings}</p>
           </div>
         </div>
+
+        {/* Balance */}
         <div className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-gray-700">Budget</h2>
-            <p className="text-3xl font-bold text-gray-900">$5,000</p>
-          </div>
-          <div className="bg-yellow-100 p-2 rounded-full">
-            <svg className="w-8 h-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm8 4a1 1 0 00-1-1H7a1 1 0 000 2h6a1 1 0 001-1z" clipRule="evenodd" />
-            </svg>
+            <h2 className="text-xl font-semibold text-gray-700">Balance</h2>
+            <p className="text-3xl font-bold text-gray-900">${balance}</p>
           </div>
         </div>
       </div>
@@ -54,18 +77,12 @@ function Dashboard() {
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">Recent Transactions</h2>
           <ul className="text-gray-600 space-y-2">
-            <li className="flex justify-between">
-              <span>Transaction 1</span>
-              <span>$100</span>
-            </li>
-            <li className="flex justify-between">
-              <span>Transaction 2</span>
-              <span>$200</span>
-            </li>
-            <li className="flex justify-between">
-              <span>Transaction 3</span>
-              <span>$300</span>
-            </li>
+            {expenses.map((exp, index) => (
+              <li key={index} className="flex justify-between">
+                <span>{exp.title}</span>
+                <span>${exp.amount}</span>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
