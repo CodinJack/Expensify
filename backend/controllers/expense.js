@@ -1,22 +1,29 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('../backend/node_modules/.prisma/client');
 const prisma = new PrismaClient();
 
 exports.addExpense = async (req, res) => {
     const { title, amount, date, description } = req.body;
 
-    if (!title || !description || !date ) {
+    if (!title || !description || !date) {
         return res.status(400).json({ message: 'All fields are required!' });
     }
-    if (amount <= 0 || typeof amount !== 'number') {
+    
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
         return res.status(400).json({ message: 'Amount must be a positive number!' });
     }
-    
+
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+        return res.status(400).json({ message: 'Invalid date format!' });
+    }
+
     try {
         const expense = await prisma.expenses.create({
             data: {
                 title,
-                amount,
-                date: new Date(date),
+                amount: parsedAmount,
+                date: parsedDate,
                 description
             },
         });
@@ -26,6 +33,7 @@ exports.addExpense = async (req, res) => {
         res.status(500).json({ message: 'Server Error' });
     }
 };
+
 
 exports.getAllExpenses = async (req, res) => {
     try {
