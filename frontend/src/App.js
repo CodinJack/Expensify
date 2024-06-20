@@ -1,55 +1,52 @@
-import React, {useState, useMemo} from 'react'
+import React, { useMemo } from 'react';
 import styled from "styled-components";
-import Orb from './components/background'
-import Navigation from './components/Navigation'
-import bg from './img/bg.png'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Orb from './components/Orb';
+import Navigation from './components/Navigation';
+import bg from './img/bg.png';
 
-import Expenses from './components/expenses'
+import Dashboard from './components/Dashboard';
+import Transactions from './components/Transactions';
+import Incomes from './components/Incomes';
+import Expenses from './components/Expenses';
 
 function App() {
-  const [active, setActive] = useState(1)
-
-  
-  const displayData = () => {
-    switch(active){
-      
-      case 1: 
-        return <Expenses />
-      default: 
-        return <Expenses />
-    }
-  }
-
-
   const orbMemo = useMemo(() => {
     return <Orb />
-  },[])
+  }, []);
 
   return (
-    <AppStyled bg={bg} className="App">
-      {orbMemo}
-      
-        <Navigation active={active} setActive={setActive} />
+    <Router>
+      <AppStyled bg={bg} className="App">
+        {orbMemo}
+        <Navigation />
         <main>
-        {displayData()}
+          <Switch>
+            <Route path="/" exact component={Dashboard} />
+            <Route path="/transactions" component={Transactions} />
+            <Route path="/incomes" component={Incomes} />
+            <Route path="/expenses" component={Expenses} />
+          </Switch>
         </main>
-
-    </AppStyled>
+      </AppStyled>
+    </Router>
   );
 }
 
 const AppStyled = styled.div`
   height: 100vh;
-   background-image: url(${props => props.bg});
+  display: flex;
+  background-image: url(${props => props.bg});
   position: relative;
-  main{
+  main {
     flex: 1;
     background: rgba(252, 246, 249, 0.78);
     border: 3px solid #FFFFFF;
     backdrop-filter: blur(4.5px);
     border-radius: 32px;
     overflow-x: hidden;
-    &::-webkit-scrollbar{
+    padding: 20px;
+    &::-webkit-scrollbar {
       width: 0;
     }
   }
