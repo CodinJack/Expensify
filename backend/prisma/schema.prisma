@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:user123@localhost:3306/expense_tracker"
+  url      = env("DATABASE_URL")
 }
 
 model user {
@@ -13,6 +13,7 @@ model user {
   username String     @unique(map: "username") @db.VarChar(255)
   password String     @db.VarChar(255)
   expenses expenses[]
+  balance  balance[]
 }
 
 model expenses {
@@ -30,14 +31,12 @@ model expenses {
 }
 
 model balance {
-  id          Int       @id @default(autoincrement())
-  user_id     Int?
-  amount      Decimal   @db.Decimal(10, 2)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  user        user?     @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  id        Int      @id @default(autoincrement())
+  user_id   Int?
+  amount    Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      user?    @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict)
 
   @@index([user_id])
 }
-
-
