@@ -9,6 +9,6 @@ router
     .post("/expense", addExpense)
     .get("/expense", getAllExpenses)
     .get("/expense/:id", getExpenseByID)
-    .delete("/delete-expense/:id", deleteExpenseByID);
+    .delete("/expense/:id", deleteExpenseByID);
 
 module.exports = router;
