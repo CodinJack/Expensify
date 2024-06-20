@@ -1,4 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("../backend/node_modules/.prisma/client");
 const prisma = new PrismaClient();
 const bcrypt = require("bcryptjs");
 
@@ -36,6 +36,9 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.getUserByID = async (req, res) => {
+    if (req.session) {
+        return res.status(401).json({ msg: "You're not authorized!" });
+    }
     if (!req.session.passport) {
         return res.status(401).json({ msg: "You're not authorized!" });
     }
