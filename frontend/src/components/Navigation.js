@@ -2,7 +2,7 @@ import React from 'react';
 import avatar from '../img/avatar.png';
 import { menuItems } from '../utils/menuitems';
 
-function Navigation({ active, setActive, children }) {
+function Navigation({ active, setActive }) {
   return (
     <nav className="w-64 h-screen bg-gradient-to-b from-indigo-900 to-purple-900 text-white p-6 flex flex-col justify-start font-sans">
       <div className="flex items-center mb-4">
